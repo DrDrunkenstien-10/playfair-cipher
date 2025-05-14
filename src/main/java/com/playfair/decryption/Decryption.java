@@ -1,23 +1,20 @@
-package com.playfair.encryption;
+package com.playfair.decryption;
 
 import java.util.List;
 
 import com.playfair.keymatrixgeneration.KeyMatrixGenerator;
 import com.playfair.pairgeneration.PairGenerator;
-import com.playfair.preprocessing.PlainTextPreProcessor;
 
-public class Encryption {
+public class Decryption {
     private static final int ROWS = 5;
     private static final int COLUMNS = 5;
 
-    public static String encrypt(String key, String plainText) {
-        StringBuilder cipherText = new StringBuilder();
+    public static String decrypt(String key, String cipherText) {
+        StringBuilder plainText = new StringBuilder();
 
         char[][] keyMatrix = KeyMatrixGenerator.generateKeyMatrix(key);
 
-        String preProcessedPlainText = PlainTextPreProcessor.preProcessPlainText(plainText);
-
-        List<String> pairs = PairGenerator.generatePairs(preProcessedPlainText);
+        List<String> pairs = PairGenerator.generatePairs(cipherText);
 
         for (int i = 0; i < pairs.size(); i++) {
             String pair = pairs.get(i);
@@ -46,52 +43,55 @@ public class Encryption {
             }
 
             if (firstCharacterRow == secondCharacterRow) {
-                cipherText.append(encryptUsingRuleTwo(firstCharacterRow, secondCharacterRow, firstCharacterColumn,
+                plainText.append(encryptUsingRuleTwo(firstCharacterRow, secondCharacterRow, firstCharacterColumn,
                         secondCharacterColumn, keyMatrix));
             }
 
             else if (firstCharacterColumn == secondCharacterColumn) {
-                cipherText.append(encryptUsingRuleThree(firstCharacterRow,
+                plainText.append(encryptUsingRuleThree(firstCharacterRow,
                         secondCharacterRow, firstCharacterColumn,
                         secondCharacterColumn, keyMatrix));
             }
 
             else {
-                cipherText.append(encryptUsingRuleOne(firstCharacterRow, secondCharacterRow, firstCharacterColumn,
+                plainText.append(encryptUsingRuleOne(firstCharacterRow, secondCharacterRow, firstCharacterColumn,
                         secondCharacterColumn, keyMatrix));
             }
         }
 
-        return cipherText.toString();
+        int indexOfX = plainText.indexOf("X");
+
+        plainText.deleteCharAt(indexOfX);
+
+        return plainText.toString();
     }
 
     private static String encryptUsingRuleOne(int firstCharacterRow, int secondCharacterRow,
             int firstCharacterColumn, int secondCharacterColumn, char[][] keyMatrix) {
-        String cipherText = "";
+        String plainText = "";
 
-        cipherText = cipherText + (keyMatrix[firstCharacterRow][secondCharacterColumn]);
-        cipherText = cipherText + (keyMatrix[secondCharacterRow][firstCharacterColumn]);
+        plainText = plainText + (keyMatrix[firstCharacterRow][secondCharacterColumn]);
+        plainText = plainText + (keyMatrix[secondCharacterRow][firstCharacterColumn]);
 
-        return cipherText;
+        return plainText;
     }
 
     private static String encryptUsingRuleTwo(int firstCharacterRow, int secondCharacterRow,
             int firstCharacterColumn, int secondCharacterColumn, char[][] keyMatrix) {
-        String cipherText = "";
+        String plainText = "";
 
-        cipherText = cipherText + (keyMatrix[firstCharacterRow][(firstCharacterColumn + 1) % 5]);
-        cipherText = cipherText + (keyMatrix[firstCharacterRow][(secondCharacterColumn + 1) % 5]);
+        plainText = plainText + (keyMatrix[firstCharacterRow][(firstCharacterColumn + 4) % 5]);
+        plainText = plainText + (keyMatrix[firstCharacterRow][(secondCharacterColumn + 4) % 5]);
 
-        return cipherText;
+        return plainText;
     }
 
     private static String encryptUsingRuleThree(int firstCharacterRow, int secondCharacterRow,
             int firstCharacterColumn, int secondCharacterColumn, char[][] keyMatrix) {
-        String cipherText = "";
+        String plainText = "";
 
-        cipherText = cipherText + (keyMatrix[(firstCharacterRow + 1) % 5][firstCharacterColumn]);
-        cipherText = cipherText + (keyMatrix[(secondCharacterRow + 1) % 5][firstCharacterColumn]);
-
-        return cipherText;
+        plainText = plainText + (keyMatrix[(firstCharacterRow + 4) % 5][firstCharacterColumn]);
+        plainText = plainText + (keyMatrix[(secondCharacterRow + 4) % 5][firstCharacterColumn]);
+        return plainText;
     }
 }
