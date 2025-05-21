@@ -31,8 +31,8 @@ The **Playfair Cipher** is a manual symmetric encryption technique and was the f
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/your-username/your-repo-name.git
-   cd your-repo-name
+   git clone git@github.com:DrDrunkenstien-10/playfair-cipher.git
+   cd playfair-cipher/
 
 2. **Build the Project**
    ```bash
